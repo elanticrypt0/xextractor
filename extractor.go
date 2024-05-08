@@ -119,7 +119,10 @@ func processFile(scanner *bufio.Scanner, extractThis string, rules map[string]st
 				parts := strings.Split(item, "@")
 
 				if len(parts) == 2 {
-					extractedResults[extractThis] = append(extractedResults[extractThis], strings.ToLower(parts[1]))
+					isDomainRegex := regexp.MustCompile(rules["domain"])
+					if isDomainRegex.MatchString(parts[1]) {
+						extractedResults[extractThis] = append(extractedResults[extractThis], strings.ToLower(parts[1]))
+					}
 				} else {
 					extractedResults[extractThis] = append(extractedResults[extractThis], strings.ToLower(item))
 				}
