@@ -1,3 +1,3 @@
-module github.com/k23dev/emailextractor
+module github.com/k23dev/xextractor
 
 go 1.22.2
