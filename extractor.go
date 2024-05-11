@@ -26,12 +26,14 @@ func Extractor(rules *Rules, filePath *string, extractThis string, outputPath st
 
 	// chequea que lo que se quiere extraer existe en las reglas
 
-	_, ruleExists := rules.Rules[extractThis]
+	if extractThis != "x" {
+		_, ruleExists := rules.Rules[extractThis]
 
-	if !ruleExists {
-		fmt.Println("-ex must be valid rule. For default: [email|domain|x (both)]")
-		rules.PrintAvailables()
-		return
+		if !ruleExists {
+			fmt.Println("-ex must be valid rule. For default: [email|domain|x (both)]")
+			rules.PrintAvailables()
+			return
+		}
 	}
 
 	fmt.Printf("Rule setted > %q \n", extractThis)
