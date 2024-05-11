@@ -17,12 +17,6 @@ func main() {
 	flag.Parse()
 	if *filePath != "" {
 		workingBanner()
-		// if *extractThis == "x" {
-		// 	Extractor(filePath, "email", *outputPath, *maxBuffer)
-		// 	Extractor(filePath, "domain", *outputPath, *maxBuffer)
-		// } else {
-		// 	Extractor(filePath, *extractThis, *outputPath, *maxBuffer)
-		// }
 		Extractor(filePath, *extractThis, *outputPath, *maxBuffer)
 	} else if *cleanFilePath != "" {
 		workingBanner()
