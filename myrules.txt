@@ -1,2 +1,2 @@
-ardomains = \b[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)+(com\.ar)\b
-aremails = \b[A-Za-z0-9._%+-]+@([A-Za-z0-9.-]+\.[A-Za-z]{2,}|[A-Za-z0-9.-]+\.(com\.ar))\b
+ardomains = \b[A-Za-z0-9._%+-]+@(?:[A-Za-z0-9-]+\.)+(?:[A-Za-z]{2,}\.)?ar\b|\b(?:[A-Za-z0-9-]+\.)+[A-Za-z]{2,}\.ar\b
+aremails = [A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\.ar\b
