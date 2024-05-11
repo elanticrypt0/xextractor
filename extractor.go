@@ -10,36 +10,33 @@ import (
 	"time"
 )
 
-func initRules() map[string]string {
-	var rules = make(map[string]string)
+func initExtractedResults(rules *Rules) map[string][]string {
+	var extractedResults = make(map[string][]string)
 
-	rules["email"] = `[\w._%+-]+@[\w.-]+\.[a-zA-Z]{2,}`
-	rules["domain"] = `(?m)(?:https?://)?(?:www\.)?([a-zA-Z0-9-]+(?:\.[a-zA-Z]+)+)`
-
-	return rules
-}
-
-func initExtractedResults() map[string][]string {
-	var rules = make(map[string][]string)
-
-	for rulesKey := range rules {
-		rules[rulesKey] = []string{}
+	for rulesKey := range rules.Rules {
+		extractedResults[rulesKey] = []string{}
 	}
 
-	return rules
+	return extractedResults
 }
 
-func Extractor(filePath *string, extractThis string, outputPath string, maxBuffer int) {
+func Extractor(rules *Rules, filePath *string, extractThis string, outputPath string, maxBuffer int) {
 
 	extractThis = strings.ToLower(extractThis)
 
-	if extractThis != "email" && extractThis != "domain" && extractThis != "x" {
-		fmt.Println("-ex must be [email|domain|x (both)]")
+	// chequea que lo que se quiere extraer existe en las reglas
+
+	_, ruleExists := rules.Rules[extractThis]
+
+	if !ruleExists {
+		fmt.Println("-ex must be valid rule. For default: [email|domain|x (both)]")
+		rules.PrintAvailables()
 		return
 	}
 
-	rules := initRules()
-	extractedResults := initExtractedResults()
+	fmt.Printf("Rule setted > %q \n", extractThis)
+
+	extractedResults := initExtractedResults(rules)
 
 	// Verificar si se proporcionó la ruta del archivo
 	if *filePath == "" {
@@ -65,7 +62,7 @@ func Extractor(filePath *string, extractThis string, outputPath string, maxBuffe
 	scanner.Buffer(make([]byte, maxBufferSize), maxBufferSize)
 
 	// select and process the file
-	extractedResults = processFile(scanner, extractThis, rules, extractedResults)
+	extractedResults = processFile(scanner, extractThis, rules.Rules, extractedResults)
 
 	// Verificar errores de escaneo
 	if err := scanner.Err(); err != nil {
@@ -74,7 +71,7 @@ func Extractor(filePath *string, extractThis string, outputPath string, maxBuffe
 	}
 
 	if extractThis == "x" {
-		for ruleKey := range rules {
+		for ruleKey := range rules.Rules {
 			if len(extractedResults[ruleKey]) > 0 {
 				createExtractsFile(outputPath, ruleKey, extractedResults[ruleKey])
 			}
@@ -87,6 +84,7 @@ func Extractor(filePath *string, extractThis string, outputPath string, maxBuffe
 }
 
 func processFile(scanner *bufio.Scanner, extractThis string, rules map[string]string, extractedResults map[string][]string) map[string][]string {
+
 	// Leer el archivo línea por línea
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -146,7 +144,11 @@ func setOutputfileName(outputPath, extractThis string) string {
 }
 
 func processLine(extractThis, line string, rules map[string]string, extractedResults map[string][]string) map[string][]string {
+
+	// fmt.Println("Entra acá process line")
+
 	var results = []string{}
+	var selectedRegex *regexp.Regexp
 
 	// if you are looking for domain checks if the line is not an email.
 	// if is it then parseit as an email and extracts the domain
@@ -156,17 +158,19 @@ func processLine(extractThis, line string, rules map[string]string, extractedRes
 			rule2Work = "email"
 		}
 
-		selectedRegex := regexp.MustCompile(rules[rule2Work])
+		selectedRegex = regexp.MustCompile(rules[rule2Work])
 		results = selectedRegex.FindAllString(line, -1)
 
 	} else {
-		selectedRegex := regexp.MustCompile(rules[extractThis])
+		selectedRegex = regexp.MustCompile(rules[extractThis])
 		results = selectedRegex.FindAllString(line, -1)
 	}
 
+	// fmt.Printf("%q", selectedRegex)
+	// fmt.Printf("%q \n", extractThis)
+
 	// Parse every result on the line.
 	for _, item := range results {
-
 		// check if the line isnot an email
 		if extractThis == "domain" {
 			// Extraer el dominio
