@@ -22,8 +22,9 @@ func initRules() map[string]string {
 func initExtractedResults() map[string][]string {
 	var rules = make(map[string][]string)
 
-	rules["email"] = []string{}
-	rules["domain"] = []string{}
+	for rulesKey := range rules {
+		rules[rulesKey] = []string{}
+	}
 
 	return rules
 }
