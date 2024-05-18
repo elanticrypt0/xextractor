@@ -1,5 +1,25 @@
 # Extract email and domains from one file.
 
+
+# Install
+
+If you have go installed in your system is very easy. Just run in your console:
+
+```go
+go install github.com/k23dev/xextractor@latest
+```
+If you dont have go. What are you waiting for? go for it [go oficial site](go.dev) download and in windows is just next next next and thats it!
+
+You can add the path and thats it
+
+otherwise you cant download the packet and build or use it like and script running 
+
+```bash
+git clone https://github.com/k23dev/xextractor
+cd xextractor
+go run . [flags]
+```
+
 Simple and super fast
 
 ## run
